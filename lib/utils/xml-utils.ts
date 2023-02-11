@@ -204,7 +204,12 @@ export function getDate(node: Node): Date | undefined {
         return new Date(text);
     }
     const bytes = new DataView(arrayToBuffer(base64ToBytes(text)));
-    const secondsFrom00 = new Int64(bytes.getUint32(0, true), bytes.getUint32(4, true)).value;
+    let secondsFrom00 = 0;
+    try {
+        secondsFrom00 = new Int64(bytes.getUint32(0, true), bytes.getUint32(4, true)).value;
+    } catch (e) {
+        secondsFrom00 = 8640000000000000;
+    }
     const diff = (secondsFrom00 - EpochSeconds) * 1000;
     return new Date(diff);
 }
